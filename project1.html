@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESUT Result Checker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        :root {
+            --esut-green: #006400;
+            --esut-blue: #1E90FF;
+            --esut-yellow: #FFD700;
+            --light-gray: #f5f5f5;
+            --white: #ffffff;
+            --dark-gray: #333333;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+        
+        /* Header Styles */
+        .header {
+            background-color: var(--esut-green);
+            color: var(--white);
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+        
+        .header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+        }
+        
+        /* Logo Container */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .logo-container img {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+        }
+        
+        .logo-container h1 {
+            color: var(--esut-green);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .logo-container p {
+            color: var(--esut-green);
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Authentication Styles */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+        
+        .auth-box {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .auth-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #777;
+            transition: all 0.3s;
+        }
+        
+        .auth-tab.active {
+            color: var(--esut-green);
+            border-bottom: 2px solid var(--esut-green);
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--esut-green);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #004d00;
+        }
+        
+        .btn-google {
+            background-color: var(--white);
+            color: var(--dark-gray);
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .btn-google:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .google-icon {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .btn-secondary {
+            background-color: var(--esut-blue);
+        }
+        
+        .btn-yellow {
+            background-color: var(--esut-yellow);
+            color: var(--dark-gray);
+        }
+        
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+        }
+        
+        .user-info {
+            background-color: var(--esut-blue);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 2px solid var(--esut-yellow);
+        }
+        
+        .user-details h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .user-details p {
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+        
+        .menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 15px;
+        }
+        
+        .menu-item {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .menu-item i {
+            font-size: 30px;
+            color: var(--esut-green);
+            margin-bottom: 10px;
+        }
+        
+        .menu-item h3 {
+            margin: 0;
+            color: var(--dark-gray);
+            font-size: 16px;
+        }
+        
+        .notification-badge {
+            background-color: var(--esut-yellow);
+            color: var(--dark-gray);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        /* Results Page Styles */
+        .semester-selector {
+            background-color: var(--esut-blue);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        select {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: white;
+            color: var(--dark-gray);
+            font-weight: bold;
+        }
+        
+        .result-container {
+            margin: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .result-header {
+            background-color: var(--esut-green);
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .result-header h2 {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .download-btn {
+            background-color: var(--esut-yellow);
+            color: var(--dark-gray);
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .result-details {
+            padding: 15px;
+        }
+        
+        .student-info {
+            margin-bottom: 15px;
+        }
+        
+        .student-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+        
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .result-table th {
+            background-color: #f0f0f0;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .result-table td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .summary-item {
+            text-align: center;
+        }
+        
+        .summary-item h3 {
+            margin: 0;
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .summary-item p {
+            margin: 5px 0 0;
+            color: var(--esut-green);
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        /* Admin Styles */
+        .admin-nav {
+            background-color: var(--esut-blue);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+        
+        .admin-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .admin-nav a.active {
+            background-color: var(--esut-yellow);
+            color: var(--dark-gray);
+        }
+        
+        .admin-container {
+            margin: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+        }
+        
+        .admin-container h2 {
+            color: var(--esut-green);
+            margin-top: 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        /* Footer Styles */
+        .footer {
+            background-color: var(--esut-green);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 12px;
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none;
+        }
+        
+        .welcome-message {
+            background-color: var(--esut-blue);
+            color: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-message h2 {
+            margin-bottom: 10px;
+        }
+        
+        .dashboard-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .action-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .action-card i {
+            font-size: 30px;
+            color: var(--esut-green);
+            margin-bottom: 10px;
+        }
+        
+        .action-card h3 {
+            color: var(--dark-gray);
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .auth-footer a {
+            color: var(--esut-blue);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <a href="#" class="back-button hidden" id="back-button"><i class="fas fa-arrow-left"></i></a>
+        <h1 id="header-title">ESUT Result Checker</h1>
+        <p id="header-subtitle">Computer Science Department</p>
+    </header>
+    
+    <!-- Main Content Container -->
+    <div class="container">
+        <!-- Authentication Section (Default View) -->
+        <div id="auth-container" class="auth-container">
+            <div class="auth-box">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+                    <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
+                </div>
+                
+                <!-- Login Form -->
+                <div id="login-form" class="auth-form active">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter your password">
+                    </div>
+                    <button class="btn" onclick="login()">Login</button>
+                    <button class="btn btn-google" onclick="loginWithGoogle()">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" class="google-icon">
+                        Login with Google
+                    </button>
+                    <div class="auth-footer">
+                        <a href="#" onclick="switchTab('forgot')">Forgot password?</a>
+                    </div>
+                </div>
+                
+                <!-- Sign Up Form -->
+                <div id="signup-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" placeholder="Create a password">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password</label>
+                        <input type="password" id="signup-confirm" placeholder="Confirm your password">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-regno">Registration Number</label>
+                        <input type="text" id="signup-regno" placeholder="Enter your registration number">
+                    </div>
+                    <button class="btn" onclick="signup()">Create Account</button>
+                    <div class="auth-footer">
+                        Already have an account? <a href="#" onclick="switchTab('login')">Login</a>
+                    </div>
+                </div>
+                
+                <!-- Forgot Password Form -->
+                <div id="forgot-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="forgot-email">Email</label>
+                        <input type="email" id="forgot-email" placeholder="Enter your email">
+                    </div>
+                    <button class="btn" onclick="resetPassword()">Reset Password</button>
+                    <div class="auth-footer">
+                        Remember your password? <a href="#" onclick="switchTab('login')">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="dashboard hidden">
+            <div class="user-info">
+                <img src="student_avatar.png" alt="Student Avatar" id="user-avatar">
+                <div class="user-details">
+                    <h2 id="user-name">Akpa Vincent Ogbonna</h2>
+                    <p id="user-regno">2021030200007</p>
+                </div>
+            </div>
+            
+            <div class="menu">
+                <div class="menu-item" onclick="navigateTo('results')">
+                    <i class="fas fa-poll"></i>
+                    <h3>View Results</h3>
+                </div>
+                
+                <div class="menu-item" onclick="navigateTo('news')">
+                    <i class="fas fa-bell"></i>
+                    <h3>Result News <span class="notification-badge">3</span></h3>
+                </div>
+                
+                <div class="menu-item" onclick="navigateTo('guide')">
+                    <i class="fas fa-info-circle"></i>
+                    <h3>Grading Guide</h3>
+                </div>
+                
+                <div class="menu-item" onclick="navigateTo('courses')">
+                    <i class="fas fa-book"></i>
+                    <h3>Course Info</h3>
+                </div>
+                
+                <div class="menu-item" onclick="navigateTo('settings')">
+                    <i class="fas fa-cog"></i>
+                    <h3>Settings</h3>
+                </div>
+                
+                <div class="menu-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <h3>Logout</h3>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Page -->
+        <div id="results-page" class="hidden">
+            <div class="semester-selector">
+                <select id="semester-select">
+                    <option value="">Select Semester</option>
+                    <option value="first" selected>First Semester 2024/2025</option>
+                    <option value="second">Second Semester 2024/2025</option>
+                    <option value="first_prev">First Semester 2023/2024</option>
+                </select>
+            </div>
+            
+            <div class="result-container">
+                <div class="result-header">
+                    <h2>First Semester 2024/2025 Results</h2>
+                    <button class="download-btn"><i class="fas fa-download"></i> Save</button>
+                </div>
+                
+                <div class="result-details">
+                    <div class="student-info">
+                        <p><strong>Name:</strong> <span id="result-name">Akpa Vincent Ogbonna</span></p>
+                        <p><strong>Reg No:</strong> <span id="result-regno">2021030200007</span></p>
+                        <p><strong>Level:</strong> <span id="result-level">ND II</span></p>
+                    </div>
+                    
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Course Title</th>
+                                <th>Credit Unit</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="result-table-body">
+                            <tr>
+                                <td>CSC 201</td>
+                                <td>Data Structures</td>
+                                <td>3</td>
+                                <td>A</td>
+                            </tr>
+                            <tr>
+                                <td>CSC 203</td>
+                                <td>Computer Architecture</td>
+                                <td>2</td>
+                                <td>B</td>
+                            </tr>
+                            <tr>
+                                <td>CSC 205</td>
+                                <td>Operating Systems</td>
+                                <td>3</td>
+                                <td>B</td>
+                            </tr>
+                            <tr>
+                                <td>CSC 207</td>
+                                <td>Database Systems</td>
+                                <td>3</td>
+                                <td>A</td>
+                            </tr>
+                            <tr>
+                                <td>MTH 201</td>
+                                <td>Linear Algebra</td>
+                                <td>2</td>
+                                <td>C</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="result-summary">
+                        <div class="summary-item">
+                            <h3>GPA</h3>
+                            <p id="result-gpa">4.25</p>
+                        </div>
+                        <div class="summary-item">
+                            <h3>CGPA</h3>
+                            <p id="result-cgpa">4.10</p>
+                        </div>
+                        <div class="summary-item">
+                            <h3>Remark</h3>
+                            <p id="result-remark">Excellent</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Admin Dashboard -->
+        <div id="admin-dashboard" class="hidden">
+            <div class="admin-nav">
+                <a href="#" class="active" onclick="showAdminSection('upload')"><i class="fas fa-upload"></i> Upload Results</a>
+                <a href="#" onclick="showAdminSection('add')"><i class="fas fa-user-plus"></i> Add Student</a>
+                <a href="#" onclick="showAdminSection('news')"><i class="fas fa-bullhorn"></i> Publish News</a>
+            </div>
+            
+            <!-- Upload Results Section -->
+            <div id="upload-section" class="admin-container">
+                <h2><i class="fas fa-upload"></i> Upload Student Results</h2>
+                
+                <form id="upload-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-no">Registration Number</label>
+                            <input type="text" id="reg-no" name="reg-no" placeholder="Enter registration number" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="semester">Semester</label>
+                            <select id="semester" name="semester" required>
+                                <option value="">Select Semester</option>
+                                <option value="first">First Semester</option>
+                                <option value="second">Second Semester</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gpa">GPA</label>
+                            <input type="text" id="gpa" name="gpa" placeholder="Enter GPA" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cgpa">CGPA</label>
+                            <input type="text" id="cgpa" name="cgpa" placeholder="Enter CGPA" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="remark">Remark</label>
+                        <textarea id="remark" name="remark" rows="3" placeholder="Enter remark about student performance"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="courses">Course Results (JSON format)</label>
+                        <textarea id="courses" name="courses" rows="6" placeholder='[{"code":"CSC201","title":"Data Structures","unit":3,"grade":"A"},...]' required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn"><i class="fas fa-save"></i> Save Results</button>
+                    <button type="reset" class="btn btn-secondary"><i class="fas fa-redo"></i> Reset</button>
+                </form>
+            </div>
+            
+            <!-- Add Student Section (Hidden by default) -->
+            <div id="add-section" class="admin-container hidden">
+                <h2><i class="fas fa-user-plus"></i> Add New Student</h2>
+                
+                <form id="add-student-form">
+                    <div class="form-group">
+                        <label for="student-name">Full Name</label>
+                        <input type="text" id="student-name" name="student-name" placeholder="Enter student's full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="student-regno">Registration Number</label>
+                        <input type="text" id="student-regno" name="student-regno" placeholder="Enter registration number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="student-email">Email Address</label>
+                        <input type="email" id="student-email" name="student-email" placeholder="Enter student's email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="student-level">Level</label>
+                        <select id="student-level" name="student-level" required>
+                            <option value="">Select Level</option>
+                            <option value="ND I">ND I</option>
+                            <option value="ND II">ND II</option>
+                            <option value="HND I">HND I</option>
+                            <option value="HND II">HND II</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn"><i class="fas fa-save"></i> Add Student</button>
+                </form>
+            </div>
+            
+            <!-- Publish News Section (Hidden by default) -->
+            <div id="news-section" class="admin-container hidden">
+                <h2><i class="fas fa-bullhorn"></i> Publish Result News</h2>
+                
+                <form id="publish-news-form">
+                    <div class="form-group">
+                        <label for="news-title">Title</label>
+                        <input type="text" id="news-title" name="news-title" placeholder="Enter news title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="news-content">Content</label>
+                        <textarea id="news-content" name="news-content" rows="6" placeholder="Enter news content" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="news-expiry">Expiry Date</label>
+                        <input type="date" id="news-expiry" name="news-expiry" required>
+                    </div>
+                    
+                    <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> Publish News</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer Section -->
+    <footer class="footer">
+        &copy; 2025 Enugu State University of Science and Technology - Computer Science Department
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script>
+        
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        
+        //// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCWVzYXcWUnDAc-eIZSawuqJ3vh74hW5vE",
+  authDomain: "esut-result-checker.firebaseapp.com",
+  databaseURL: "https://esut-result-checker-default-rtdb.firebaseio.com",
+  projectId: "esut-result-checker",
+  storageBucket: "esut-result-checker.firebasestorage.app",
+  messagingSenderId: "366908039749",
+  appId: "1:366908039749:web:2cd77ce650c64d67f8b92c"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig); Elements
+        const authContainer = document.getElementById('auth-container');
+        const dashboard = document.getElementById('dashboard');
+        const resultsPage = document.getElementById('results-page');
+        const adminDashboard = document.getElementById('admin-dashboard');
+        const backButton = document.getElementById('back-button');
+        const headerTitle = document.getElementById('header-title');
+        const headerSubtitle = document.getElementById('header-subtitle');
+        
+        // Current view state
+        let currentView = 'auth';
+        let previousView = '';
+        
+        // Navigation functions
+        function navigateTo(view) {
+            previousView = currentView;
+            currentView = view;
+            
+            // Hide all views
+            document.querySelectorAll('.dashboard, #results-page, #admin-dashboard').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Show back button if not coming from auth
+            if (previousView !== 'auth') {
+                backButton.classList.remove('hidden');
+            } else {
+                backButton.classList.add('hidden');
+            }
+            
+            // Update header
+            switch(view) {
+                case 'dashboard':
+                    headerTitle.textContent = 'ESUT Result Checker';
+                    headerSubtitle.textContent = 'Computer Science Department';
+                    dashboard.classList.remove('hidden');
+                    break;
+                case 'results':
+                    headerTitle.textContent = 'My Academic Results';
+                    headerSubtitle.textContent = 'Computer Science Department';
+                    resultsPage.classList.remove('hidden');
+                    break;
+                case 'admin':
+                    headerTitle.textContent = 'Admin Dashboard';
+                    headerSubtitle.textContent = 'Computer Science Department';
+                    adminDashboard.classList.remove('hidden');
+                    showAdminSection('upload');
+                    break;
+                default:
+                    headerTitle.textContent = 'ESUT Result Checker';
+                    headerSubtitle.textContent = 'Computer Science Department';
+            }
+        }
+        
+        // Back button functionality
+        backButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            navigateTo(previousView);
+        });
+        
+        // Admin section navigation
+        function showAdminSection(section) {
+            // Hide all admin sections
+            document.querySelectorAll('#upload-section, #add-section, #news-section').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Update active nav link
+            document.querySelectorAll('.admin-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            switch(section) {
+                case 'upload':
+                    document.getElementById('upload-section').classList.remove('hidden');
+                    document.querySelector('.admin-nav a:nth-child(1)').classList.add('active');
+                    break;
+                case 'add':
+                    document.getElementById('add-section').classList.remove('hidden');
+                    document.querySelector('.admin-nav a:nth-child(2)').classList.add('active');
+                    break;
+                case 'news':
+                    document.getElementById('news-section').classList.remove('hidden');
+                    document.querySelector('.admin-nav a:nth-child(3)').classList.add('active');
+                    break;
+            }
+        }
+        
+        // Switch between auth tabs
+        function switchTab(tabName) {
+            // Hide all forms
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected form and activate tab
+            if (tabName === 'login') {
+                document.getElementById('login-form').classList.add('active');
+                document.querySelectorAll('.auth-tab')[0].classList.add('active');
+            } else if (tabName === 'signup') {
+                document.getElementById('signup-form').classList.add('active');
+                document.querySelectorAll('.auth-tab')[1].classList.add('active');
+            } else if (tabName === 'forgot') {
+                document.getElementById('forgot-form').classList.add('active');
+            }
+        }
+        
+        // Login with email/password
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Successful login
+                    const user = userCredential.user;
+                    loadDashboard(user);
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
+        }
+        
+        // Login with Google
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    // Successful login
+                    const user = result.user;
+                    loadDashboard(user);
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
+        }
+        
+        // Sign up new user
+        function signup() {
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm').value;
+            const regNo = document.getElementById('signup-regno').value;
+            
+            if (password !== confirmPassword) {
+                alert("Passwords don't match!");
+                return;
+            }
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // User created successfully
+                    const user = userCredential.user;
+                    
+                    // Save additional user data to database
+                    return database.ref('users/' + user.uid).set({
+                        email: email,
+                        regNo: regNo,
+                        createdAt: firebase.database.ServerValue.TIMESTAMP
+                    });
+                })
+                .then(() => {
+                    // Data saved successfully
+                    loadDashboard(auth.currentUser);
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
+        }
+        
+        // Reset password
+        function resetPassword() {
+            const email = document.getElementById('forgot-email').value;
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    alert('Password reset email sent!');
+                    switchTab('login');
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
+        }
+        
+        // Load dashboard after successful authentication
+        function loadDashboard(user) {
+            // Hide auth container
+            authContainer.style.display = 'none';
+            
+            // Check if user is admin
+            database.ref('admins/' + user.uid).once('value')
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        // User is admin
+                        navigateTo('admin');
+                    } else {
+                        // Regular user
+                        navigateTo('dashboard');
+                    }
+                    
+                    // Load user data
+                    return database.ref('users/' + user.uid).once('value');
+                })
+                .then((snapshot) => {
+                    const userData = snapshot.val();
+                    updateUserInfo(user, userData);
+                })
+                .catch((error) => {
+                    console.error("Error loading user data:", error);
+                });
+        }
+        
+        // Update user information in the UI
+        function updateUserInfo(user, userData) {
+            document.getElementById('user-name').textContent = user.displayName || user.email;
+            document.getElementById('user-regno').textContent = userData.regNo || 'Not provided';
+            
+            // Also update results page info
+            document.getElementById('result-name').textContent = user.displayName || user.email;
+            document.getElementById('result-regno').textContent = userData.regNo || 'Not provided';
+        }
+        
+        // Logout function
+        function logout() {
+            auth.signOut().then(() => {
+                // Show auth container and hide dashboard
+                authContainer.style.display = 'flex';
+                dashboard.classList.add('hidden');
+                resultsPage.classList.add('hidden');
+                adminDashboard.classList.add('hidden');
+                
+                // Reset forms
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-password').value = '';
+            });
+        }
+        
+        // Form submissions
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Handle result upload
+            alert('Results uploaded successfully!');
+            this.reset();
+        });
+        
+        document.getElementById('add-student-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Handle student addition
+            alert('Student added successfully!');
+            this.reset();
+        });
+        
+        document.getElementById('publish-news-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Handle news publication
+            alert('News published successfully!');
+            this.reset();
+        });
+        
+        // Check auth state on page load
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                loadDashboard(user);
+            } else {
+                // User is signed out
+                authContainer.style.display = 'flex';
+                dashboard.classList.add('hidden');
+                resultsPage.classList.add('hidden');
+                adminDashboard.classList.add('hidden');
+            }
+        });
+    </script>
+    </body>
+    </html>
